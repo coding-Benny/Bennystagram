@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
             task ->
                 if(task.isSuccessful) {
                     // Creating a user account
-                    moveMainPage(task.result.user)
+                    moveMainPage(task.result?.user)
                 } else if(!task.exception?.message.isNullOrEmpty()) {
                     // Show the error message
                     Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
             task ->
                 if (task.isSuccessful) {
                     // Login
-                    moveMainPage(task.result.user)
+                    moveMainPage(task.result?.user)
                 } else {
                     // Show the error message
                     Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
