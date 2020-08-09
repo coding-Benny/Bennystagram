@@ -28,10 +28,10 @@ import java.util.*
 
 
 class LoginActivity : AppCompatActivity() {
-    var auth : FirebaseAuth? = null
-    var googleSignInClient : GoogleSignInClient? = null
+    var auth: FirebaseAuth? = null
+    var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 9001
-    var callbackManager : CallbackManager? = null
+    var callbackManager: CallbackManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -55,9 +55,11 @@ class LoginActivity : AppCompatActivity() {
         //printHashKey()
         callbackManager = CallbackManager.Factory.create()
     }
+
     fun printHashKey() {
         try {
-            val info: PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            val info: PackageInfo =
+                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
             for (signature in info.signatures) {
                 val md = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())
@@ -70,15 +72,17 @@ class LoginActivity : AppCompatActivity() {
             Log.e("TAG", "printHashKey()", e)
         }
     }
+
     fun googleLogin() {
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
     }
+
     fun facebookLogin() {
         LoginManager.getInstance()
             .logInWithReadPermissions(this, Arrays.asList("public_profile", "email"))
         LoginManager.getInstance()
-            .registerCallback(callbackManager, object : FacebookCallback<LoginResult>{
+            .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult?) {
                     // Second step
                     handleFacebookAccessToken(result?.accessToken)
@@ -93,11 +97,11 @@ class LoginActivity : AppCompatActivity() {
                 }
             })
     }
-    fun handleFacebookAccessToken(token : AccessToken?) {
+
+    fun handleFacebookAccessToken(token: AccessToken?) {
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
         auth?.signInWithCredential(credential)
-            ?.addOnCompleteListener {
-                    task ->
+            ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Third step
                     // Login
@@ -108,23 +112,24 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         callbackManager?.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == GOOGLE_LOGIN_CODE) {
+        if (requestCode == GOOGLE_LOGIN_CODE) {
             var result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
-                if(result!!.isSuccess) {
-                    var account = result.signInAccount
-                    // second step
-                    firebaseAuthWithGoogle(account)
-                }
+            if (result!!.isSuccess) {
+                var account = result.signInAccount
+                // Second step
+                firebaseAuthWithGoogle(account)
+            }
         }
     }
-    fun firebaseAuthWithGoogle(account : GoogleSignInAccount?) {
+
+    fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         var credential = GoogleAuthProvider.getCredential(account?.idToken, null)
         auth?.signInWithCredential(credential)
-            ?.addOnCompleteListener {
-                    task ->
+            ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Login
                     moveMainPage(task.result?.user)
@@ -134,26 +139,32 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
+
     fun signinAndSignup() {
-        auth?.createUserWithEmailAndPassword(email_edittext.text.toString(), password_edittext.text.toString())
-            ?.addOnCompleteListener {
-            task ->
-                if(task.isSuccessful) {
+        auth?.createUserWithEmailAndPassword(
+            email_edittext.text.toString(),
+            password_edittext.text.toString()
+        )
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     // Creating a user account
                     moveMainPage(task.result?.user)
-                } else if(!task.exception?.message.isNullOrEmpty()) {
+                } else if (!task.exception?.message.isNullOrEmpty()) {
                     // Show the error message
                     Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
                 } else {
                     // Login if you have account
                     sigininEmail()
                 }
-        }
+            }
     }
+
     fun sigininEmail() {
-        auth?.signInWithEmailAndPassword(email_edittext.text.toString(), password_edittext.text.toString())
-            ?.addOnCompleteListener {
-            task ->
+        auth?.signInWithEmailAndPassword(
+            email_edittext.text.toString(),
+            password_edittext.text.toString()
+        )
+            ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Login
                     moveMainPage(task.result?.user)
@@ -161,10 +172,11 @@ class LoginActivity : AppCompatActivity() {
                     // Show the error message
                     Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
                 }
-        }
+            }
     }
+
     fun moveMainPage(user: FirebaseUser?) {
-        if(user != null) {
+        if (user != null) {
             startActivity(Intent(this, MainActivity::class.java))
         }
     }
