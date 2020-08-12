@@ -11,9 +11,11 @@ import androidx.core.content.ContextCompat
 import com.example.bennystagram.navigation.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when(p0.itemId) {
             R.id.action_home ->{
@@ -39,6 +41,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.action_account ->{
                 var userFragment = UserFragment()
+                var bundle = Bundle()
+                var uid = FirebaseAuth.getInstance().currentUser?.uid
+                bundle.putString("destinationUid", uid)
+                userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment).commit()
                 return true
             }
