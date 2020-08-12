@@ -23,8 +23,8 @@ class DetailViewFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         uid = FirebaseAuth.getInstance().currentUser?.uid
 
-        view.detailviewfragment_recyclerview.adapter = DetailViewRecyclerViewAdapter()
-        view.detailviewfragment_recyclerview.layoutManager = LinearLayoutManager(activity)
+        view.detailViewFragment_recyclerView.adapter = DetailViewRecyclerViewAdapter()
+        view.detailViewFragment_recyclerView.layoutManager = LinearLayoutManager(activity)
         return view
     }
     inner class DetailViewRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -35,6 +35,10 @@ class DetailViewFragment : Fragment() {
             firestore?.collection("images")?.orderBy("timestamp")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 contentDTOs.clear()
                 contentUidList.clear()
+
+                // Sometimes, this code return null of querySnapshot when it signout
+                if(querySnapshot == null) return@addSnapshotListener
+
                 for(snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject(ContentDTO::class.java)
                     contentDTOs.add(item!!)
@@ -61,7 +65,7 @@ class DetailViewFragment : Fragment() {
             viewholder.detailViewItem_profile_textView.text = contentDTOs!![position].userId
 
             // Image
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(viewholder.detailviewitem_imageview_content)
+            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(viewholder.detailViewItem_imageView_content)
 
             // Explain of content
             viewholder.detailViewItem_explain_textView.text = contentDTOs!![position].explain
@@ -70,7 +74,7 @@ class DetailViewFragment : Fragment() {
             viewholder.detailViewItem_favoriteCounter_textView.text = "Likes " + contentDTOs!![position].favoriteCount
 
             // ProfileImage
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(viewholder.detailViewItem_profile_image)
+            Glide.with(holder.itemView.context).load(R.mipmap.ic_launcher).into(viewholder.detailViewItem_profile_image)
 
             // This code is when the button is clicked
             viewholder.detailViewItem_favorite_imageView.setOnClickListener {
@@ -85,6 +89,16 @@ class DetailViewFragment : Fragment() {
             else {
                 // This is unlike status
                 viewholder.detailViewItem_favorite_imageView.setImageResource(R.drawable.ic_favorite_border)
+            }
+
+            // This code is when the profile image is clicked
+            viewholder.detailViewItem_profile_image.setOnClickListener {
+                var fragment = UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid", contentDTOs[position].uid)
+                bundle.putString("userId", contentDTOs[position].userId)
+                fragment.arguments = bundle
+                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content, fragment)?.commit()
             }
         }
         fun favoriteEvent(position : Int) {

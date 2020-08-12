@@ -23,12 +23,12 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:id="@+id/detailviewitem_imageview_content"
+        android:id="@+id/detailViewItem_imageView_content"
         android:scaleType="fitXY" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:gravity="center_vertical">
         <ImageView
             android:layout_width="35dp"
