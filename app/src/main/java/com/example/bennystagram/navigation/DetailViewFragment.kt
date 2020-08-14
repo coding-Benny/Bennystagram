@@ -12,9 +12,12 @@ import com.bumptech.glide.Glide
 import com.example.bennystagram.R
 import com.example.bennystagram.navigation.model.AlarmDTO
 import com.example.bennystagram.navigation.model.ContentDTO
+import com.example.bennystagram.navigation.util.FcmPush
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.fragment_user.*
+import kotlinx.android.synthetic.main.item_detail.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class DetailViewFragment : Fragment() {
@@ -76,7 +79,7 @@ class DetailViewFragment : Fragment() {
             viewholder.detailViewItem_favoriteCounter_textView.text = "Likes " + contentDTOs!![position].favoriteCount
 
             // ProfileImage
-            Glide.with(holder.itemView.context).load(R.mipmap.ic_launcher).into(viewholder.detailViewItem_profile_image)
+            Glide.with(activity!!).load(R.mipmap.ic_launcher).into(viewholder.detailViewItem_profile_image)
 
             // This code is when the button is clicked
             viewholder.detailViewItem_favorite_imageView.setOnClickListener {
@@ -138,6 +141,9 @@ class DetailViewFragment : Fragment() {
             alarmDTO.kind = 0
             alarmDTO.timestamp = System.currentTimeMillis()
             FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+            var message = FirebaseAuth.getInstance()?.currentUser?.email + getString(R.string.alarm_favorite)
+            FcmPush.instance.sendMessage(destinationUid, "Bennystagram", message)
         }
     }
 }

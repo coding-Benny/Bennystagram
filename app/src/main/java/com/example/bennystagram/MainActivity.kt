@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import com.example.bennystagram.navigation.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
@@ -87,6 +86,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottom_navigation.selectedItemId = R.id.action_home
         registerPushToken()
     }
+
+    /* override fun onStop() {
+        super.onStop()
+        FcmPush.instance.sendMessage("", "hi", "bye")
+    } */
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
