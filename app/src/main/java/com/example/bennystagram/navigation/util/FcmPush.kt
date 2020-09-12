@@ -3,7 +3,7 @@ package com.example.bennystagram.navigation.util
 import com.example.bennystagram.navigation.model.PushDTO
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
-import okhttp3.*
+import com.squareup.okhttp.*
 import java.io.IOException
 
 class FcmPush {
@@ -40,11 +40,11 @@ class FcmPush {
                     .build()
 
                 okHttpClient?.newCall(request)?.enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
+                    override fun onFailure(request: Request?, e: IOException?) {
 
                     }
 
-                    override fun onResponse(call: Call, response: Response) {
+                    override fun onResponse(response: Response?) {
                         println(response?.body()?.string())
                     }
                 })
